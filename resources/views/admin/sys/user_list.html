@@ -1,0 +1,89 @@
+{% extends "admin/master.html" %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <table class="table-search autowidth">
+            <tr>
+                <td><img src="{{CDNRESOURCE}}images/ico/search.gif" class="ico" /> 搜索用戶：</td>
+                <td><input class="input_text120 text_gray" type="text" id="key" value="{{key}}" placeholder="搜索用户" /></td>
+                <td><button type="submit" id="btnSearch" class="input_button4"><img src="{{CDNRESOURCE}}images/ico/search.gif" class="ico" /> 搜索</button></td>
+            </tr>
+        </table>
+    </div>
+    <div class="content-list">
+        <table class="gridview autowidth">
+            <tr>
+                <th class="center"><a href="?begin={{begin}}&end={{end}}&key={{key}}&oc=1&os={{getOrderStatus(1, oc, os)}}" class="orderby <?=$oc == 1 ? $os : "" ?>">用戶ID</a></th>
+                <th class="center">暱稱</th>
+                <th class="center">性别</th>
+                <th class="center">语言</th>
+                <th class="center"><a href="?begin={{begin}}&end={{end}}&key={{key}}&oc=16&os={{getOrderStatus(16, oc, os)}}" class="orderby {{smys(oc==16, os, "")}}">注册时间</a></th>
+                <th class="center"><a href="?begin={{begin}}&end={{end}}&key={{key}}&oc=15&os={{getOrderStatus(15, oc, os)}}" class="orderby {{smys(oc==15, os, "")}}">登录次数</a></th>
+                <th class="center"><a href="?begin={{begin}}&end={{end}}&key={{key}}&oc=2&os={{getOrderStatus(2, oc, os)}}" class="orderby{{smys(oc==2, os, "")}}">最后登录时间</a></th>
+                <th class="center">管理 {% if user_right.add %}<a href="{{BASEURI}}admin/sys/user_op" id="addUser" class="tab_open"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加用戶</a>{% endif  %}</th>
+                <th class="center">注册ip</th>
+                <th class="center">登录ip</th>
+            </tr>
+            {% if len(users) == 0 %}
+            <tr><td colspan="50" class="center">暫無數據！ {% if user_right.add %}<a href="{{BASEURI}}admin/sys/user_op" id="addUser" class="tab_open"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加用戶</a>{% endif  %}</td></tr>
+            {% endif %}
+            {% for user in users %}
+            <tr>
+                <td class="center">{{user.Uid}}</td>
+                <td class="pl5">{{user.Nickname}}</td>
+                <td class="center">{{smys(user.Gender == "m", "男", "女")}}</td>
+                <td class="center">{{user.Local}}</td>
+                <td class="center">{{smys(user.RegDate == 0, "", user.RegDate|timeformat:"2006-01-02 15:04")}}</td>
+                <td class="right pr5">{{user.LoginTimes}}</td>
+                <td class="center">{{smys(user.LoginDate == 0, "", user.LoginDate|timeformat:"2006-01-02 15:04")}}</td>
+                <td class="pl5">
+                    {% if user_right.edit  %}
+                    <a href="{{BASEURI}}admin/sys/user_op?uid={{user.Uid}}" id="User{{user.Uid}}" class="tab_open"><img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" /> 修改用戶</a>
+                    {% else  %}
+                    <a href="{{BASEURI}}admin/sys/user_op?uid={{user.Uid}}" id="User{{user.Uid}}" class="tab_open"><img src="{{CDNRESOURCE}}images/ico/view.gif" class="ico" /> 查看用戶</a>
+                    {% endif  %}
+                    {% if user_right.delete  %}
+                    <a href="{{BASEURI}}admin/sys/user_delete?uid={{user.Uid}}" onclick="return confirm('刪除不可恢復，您確實要刪除數據嗎？')"><img src="{{CDNRESOURCE}}images/ico/delete.gif" class="ico" /> 刪除用戶</a>
+                    {% endif  %}
+                </td>
+                <td class="pl5">{{user.RegIp}}({{getAddressByIP(user.RegIp)}})</td>
+                <td class="pl5">{{user.LoginIp}}({{getAddressByIP(user.LoginIp)}})</td>
+            </tr>
+           {% endfor  %}
+        </table>
+        <div class="pager t_l"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="{{CDNRESOURCE}}js/my97datepicker/wdatepicker.js"></script>
+
+<script type="text/javascript">
+    rbgame.starcloud.admin.pageLoad(1);
+
+    $("#btnSearch").click(function () {
+        top.tab.refresh();
+        var begin = $("#begin").val();
+        var end = $("#end").val();
+        var key = $("#key").val();
+        var oc = {{oc}};
+        var os = '{{os}}';
+        location.href = "?begin={0}&end={1}&key={2}&oc={3}&os={4}&page=1".format(begin, end, key, oc, os);
+    }).btnSubmit($(".table-search"));
+
+    $('.pager').pager({
+        align: 'left',
+        page: {{page}},
+        pageSize: 25,
+        total: {{totals}},
+    showGo: true,
+        url: "?page={0}&key=" + $("#key").val() + "&begin=" + $("#begin").val() + "&end=" + $("#end").val() + "&oc={{oc}}&os={{os}}"
+    });
+</script>
+{% endblock %}

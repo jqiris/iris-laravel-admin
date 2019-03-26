@@ -1,0 +1,136 @@
+{% extends "admin/master.html" %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title">{% if role_id > 0 %}<img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" />  修改{% else %}<img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加{% endif %}角色</span>
+    </div>
+    <div class="content-list">
+        {% if (role_id < 1 && user_right.add) || user_right.edit %}
+        <form method="post" name="data" action="{{BASEURI}}admin/sys/role_post?role_id={{role_id}}">
+            {{csrfField|truncatechars_html:25}}
+            {% endif %}
+            <table class="table-form">
+                <colgroup>
+                    <col width="150px" />
+                    <col />
+                </colgroup>
+                <tr>
+                    <th class="t">角色名稱：</th>
+                    <td class="pl5 t"><input type="text" class="input_text" name="txtName" value="{% if role %}{{role.RoleName}}{% endif %}" /> <span class="red">* 必須輸入</span></td>
+                </tr><tr>
+                    <th>角色代碼：</th>
+                    <td class="pl5"><input type="text" class="input_text" name="txtEName" value="{% if role %}{{role.RoleEname}}{% endif %}" /> <span class="red">* 必須輸入</span></td>
+                </tr><tr>
+                    <th>角色權限：</th>
+                    <td class="pl5">
+                        <textarea class="hide" name="txtFuncsName" id="txtFuncsName">{% if role %}{{role.RoleFuncnames}}{% endif %}</textarea>
+                        <textarea class="hide" name="txtFuncsID" id="txtFuncsID">{% if role %}{{role.RoleFuncids}}{% endif %}</textarea>
+                        <table class="gridview" style="width:500px">
+                            <colgroup>
+                                <col width="180px" />
+                                <col />
+                            </colgroup>
+                            <tr>
+                                <th class="center t" style="padding-top:7px;">功能名稱</th>
+                                <th class="center t" style="padding-top:7px;"><label><input type="checkbox" id="chkAll" /> 功能操作</label></th>
+                            </tr>
+                            <?php foreach($apps as $app):?>
+                            {% for _,detail in funcs %}
+                            <tr class="tree_table_node">
+                                <td class="item pl25" colspan="2"><img src="{{CDNRESOURCE}}images/ico/{{detail.AppImg}}" /> {{detail.AppName}}</td>
+                            </tr>
+                            {% for func in  detail.AppFunc %}
+                            <tr class="funcitem tree_table_item" name="{{func.func_name.Strval}}" value="{{func.func_id.Intval}}">
+                                <td class="item pl25" title="{{func.func_name.Strval}}" nobr><img src="{{CDNRESOURCE}}images/ico/{{func.func_img.Strval}}" /> <label><input type="checkbox" class="chkFunc" name="chkFunc{{func.func_id.Intval}}" /> {{func.func_name.Strval}}</label></td>
+                                <td class="pl5">
+                                    <label><input type="checkbox" class="chkOp" name="view">瀏覽</label>&nbsp;&nbsp;
+                                    <label><input type="checkbox" class="chkOp" name="add">添加</label>&nbsp;&nbsp;
+                                    <label><input type="checkbox" class="chkOp" name="edit">修改</label>&nbsp;&nbsp;
+                                    <label><input type="checkbox" class="chkOp" name="delete">刪除</label>&nbsp;&nbsp;
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr><tr>
+                    <th>狀態：</th>
+                    <td class="pl5"><div class="input_cbo"><label>請選擇</label>
+                            <select name="cboStatus">
+                                <option value="0" {% if role && role.Status==0 %} selected=selected {% endif %}>不可用</option>
+                                <option value="1" {% if role && role.Status==1 %} selected=selected {% endif %}>可用</option>
+                            </select>
+                        </div> <span class="require">* 狀態可用時才能正試使用</span></td>
+                </tr><tr>
+                    <td></td>
+                    <td class="pl5">
+                        {% if (role_id < 1 && user_right.add) || user_right.edit %}
+                        <input type="submit" class="input_button4" value=" 提交數據 " />　
+                        {% endif %}
+                        <input type="button" class="input_button2" value=" 返回列表 " onclick="location.href='{{BASEURI}}admin/sys/role_list';" />
+                    </td>
+                </tr>
+            </table>
+            {% if (role_id < 1 && user_right.add) || user_right.edit %}
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    var func_list = $("#txtFuncsID").val().split(';');
+    $(func_list).each(function(i, item){
+        var list = item.split('-');
+        if (list.length == 5) {
+            var tr = $(".funcitem[value='" + list[4] + "']");
+            tr.find(".chkFunc").attr("checked", true);
+            for(var i=0; i<5; i++){
+                tr.find(".chkOp[name='" + list[i] + "']").attr("checked", true);
+            }
+        }
+    });
+    function checkValue(){
+        var funcitem = $(".funcitem"), check = false, funcnames = '', funcids = '', me = null;
+        funcitem.each(function(){
+            me = $(this);
+            check = me.find(".chkFunc").attr("checked") || false;
+            if (check) {
+                funcnames += me.attr("name") + ";";
+                me.find(".chkOp").each(function(){ funcids += (this.checked ? this.name : "") + "-"; });
+                funcids += me.attr("value") + ";";
+            }
+        });
+        $("#txtFuncsName").val(funcnames);
+        $("#txtFuncsID").val(funcids);
+    }
+    $("#chkAll").click(function(){
+        $(".gridview input[type='checkbox']:not('#chkAll')").attr("checked", $(this).attr("checked") || false);
+        checkValue();
+    });
+    $(".chkOp").click(function(){
+        var parent = $(this).parent().parent();
+        var len = parent.find("input[type='checkbox']:checked").length;
+        parent.prev().find("input[type='checkbox']:eq(0)").attr("checked", len == 0 ? false : true);
+        checkValue();
+    });
+    $(".chkFunc").click(function(){
+        $(this).parent().parent().next().find("input[type='checkbox']").attr("checked", $(this).attr("checked") || false);
+        checkValue();
+    });
+    $("input[type='submit']").click(function(){
+        if ($("input[name='txtName']").val() == '') { alert("請輸入角色名稱！"); $("input[name='txtName']").focus(); return false; };
+        if ($("input[name='txtEName']").val() == '') { alert("請輸入角色代碼！"); $("input[name='txtEName']").focus(); return false; };
+        checkValue();
+        return true;
+    });
+    $(".gridview").treeTable(true);
+    rbgame.starcloud.admin.pageLoad(true);
+</script>
+{% endblock %}

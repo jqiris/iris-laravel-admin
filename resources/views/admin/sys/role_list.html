@@ -1,0 +1,59 @@
+{% extends "admin/master.html" %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title"><img src="{{CDNRESOURCE}}images/ico/back.gif" class="ico" /> 角色管理：</span>
+    </div>
+    <div class="content-list">
+        <table class="gridview nofix">
+            <colgroup>
+                <col class="_w8" />
+                <col class="_w15" />
+                <col class="_w15" />
+                <col />
+                <col class="_w8" />
+                <col class="_w18" />
+            </colgroup>
+            <tr>
+                <th class="center">ID</th>
+                <th class="center">角色名稱</th>
+                <th class="center">角色代碼</th>
+                <th class="center">權限</th>
+                <th class="center">狀態</th>
+                <th class="center">管理 {% if user_right.add %}<a href="{{BASEURI}}admin/sys/role_op"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加角色</a>{% endif %}</th>
+            </tr>
+            {% if  len(roles) == 0 %}
+            <tr><td colspan="6" class="center">暫無數據！ {% if user_right.add %}<a href="{{BASEURI}}admin/game/op"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加角色</a>{% endif %}</td></tr>
+            {% endif %}
+            {% for role in roles %}
+            <tr>
+                <td class="center">{{role.RoleId}}</td>
+                <td class="center">{{role.RoleName}}</td>
+                <td class="center">{{role.RoleEname}}</td>
+                <td class="pl5" title="{{role.RoleFuncnames}}">{{role.RoleFuncnames}}</td>
+                <td class="center">{{smys(role.Status == 1, "可用", "不可用")}}</td>
+                <td class="center">
+                    {% if user_right.edit %}
+                    <a href="{{BASEURI}}admin/sys/role_op?role_id={{role.RoleId}}"><img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" /> 修改角色</a>
+                    {% else  %}
+                    <a href="{{BASEURI}}admin/sys/role_op?role_id={{role.RoleId}}"><img src="{{CDNRESOURCE}}images/ico/view.gif" class="ico" /> 查看角色</a>
+                    {% endif  %}
+                    {% if user_right.delete %}
+                    <a href="{{BASEURI}}admin/sys/role_delete?role_id={{role.RoleId}}" onclick="return confirm('刪除不可恢復，您確實要刪除數據嗎？')"><img src="{{CDNRESOURCE}}images/ico/delete.gif" class="ico" /> 刪除角色</a>
+                    {% endif  %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript"> rbgame.starcloud.admin.pageLoad(1); </script>
+{% endblock %}

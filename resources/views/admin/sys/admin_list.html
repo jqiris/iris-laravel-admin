@@ -1,0 +1,51 @@
+{% extends "admin/master.html" %}
+
+{% block content %}
+{% set last_role = "" %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title"><img src="{{CDNRESOURCE}}images/ico/back.gif" class="ico" /> 管理员管理：</span>
+    </div>
+    <div class="content-list">
+        <table class="gridview autowidth">
+            <tr>
+                <th class="center">UID</th>
+                <th class="center">昵称</th>
+                <th class="center">EMAIL</th>
+                <th class="center">角色權限</th>
+                <th class="center">添加時間</th>
+                <th class="center">管理 {% if user_right.add %}<a href="{{BASEURI}}admin/sys/admin_op"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加管理員</a>{% endif %}</th>
+            </tr>
+            {% if len(admins) == 0 %}
+            <tr><td colspan="6" class="center">暫無數據！ {% if user_right.add %}<a href="{{BASEURI}}admin/sys/admin_op"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加管理員</a>{% endif %}</td></tr>
+            {% endif %}
+            {%  for admin in admins %}
+            <tr class="tree_table_item">
+                <td class="item pl25">{{admin.user_id.Intval}}</td>
+                <td class="item pl25">{{admin.nickname.Strval}}</td>
+                <td class="pl5">{{admin.email.Strval}}</td>
+                <td class="pl5 nowrap" title="{{admin.role_funcnames.Strval}}">{{admin.role_funcnames.Strval}}</td>
+                <td class="center">{{admin.reg_date.Intval|timeformat:"2006-01-02 15:04"}}</td>
+                <td class="center">
+                    {%  if user_right.edit %}
+                    <a href="{{BASEURI}}admin/sys/admin_op?user_id={{admin.user_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" /> 修改管理员</a>
+                    {%  else %}
+                    <a href="{{BASEURI}}admin/sys/admin_op?user_id={{admin.user_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/view.gif" class="ico" /> 查看管理员</a>
+                    {% endif %}
+                    {%  if user_right.delete %}
+                    <a href="{{BASEURI}}admin/sys/admin_delete?user_id={{admin.user_id.Intval}}" onclick="return confirm('刪除不可恢復，您確實要刪除數據嗎？')"><img src="{{CDNRESOURCE}}images/ico/delete.gif" class="ico" /> 刪除管理员</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {%  endfor  %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    rbgame.starcloud.admin.pageLoad(1);
+    $(".gridview").treeTable(true);
+</script>
+{% endblock %}

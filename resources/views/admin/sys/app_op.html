@@ -1,0 +1,73 @@
+{% extends "admin/master.html" %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title">{% if app_id > 0 %}<img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" />  修改{% else  %}<img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加{% endif  %}應用</span>
+    </div>
+    <div class="content-list">
+        {% if (app_id < 1 && user_right.add) || user_right.edit %}
+        <form method="post" name="data" action="{{BASEURI}}admin/sys/app_post?app_id={{app_id}}">
+            {{csrfField|truncatechars_html:25}}
+           {% endif %}
+            <table class="table-form">
+                <colgroup>
+                    <col width="150px" />
+                    <col />
+                </colgroup>
+                <tr>
+                    <th class="t">應用名稱：</th>
+                    <td class="pl5 t"><input type="text" class="input_text" name="txtName" value="{% if app %}{{app.AppName}}{% endif %}" /> <span class="red">* 必須輸入</span></td>
+                </tr><tr>
+                    <th>應用代碼：</th>
+                    <td class="pl5"><input type="text" class="input_text" name="txtEname" value="{% if app %}{{app.AppEname}}{% endif %}" /> <span class="red">* 必須輸入</span></td>
+                </tr><tr>
+                    <th>應用圖片16x16：</th>
+                    <td class="pl5"><textarea class="imagelist" id="txtImg" name="txtImg">{% if app %}{{app.AppImg}}{% endif %}</textarea><span class="red">* 必須選擇</span></td>
+                </tr><tr>
+                    <th>排序：</th>
+                    <td class="pl5"><input type="text" class="input_text" name="txtOrder" value="{% if app %}{{app.AppOrder}}{% endif %}" /></td>
+                </tr><tr>
+                    <th>狀態：</th>
+                    <td class="pl5"><div class="input_cbo"><label>請選擇</label>
+                            <select name="cboStatus">
+                                <option value="0" {% if app && app.Status==0 %} selected=selected {% endif %}>不可用</option>
+                                <option value="1" {% if app && app.Status==1 %} selected=selected {% endif %}>可用</option>
+                            </select>
+                        </div> <span class="require">* 狀態可用時才能正試使用</span></td>
+                </tr><tr>
+                    <td></td>
+                    <td class="pl5">
+                        {% if (app_id < 1 && user_right.add) || user_right.edit %}
+                        <input type="submit" class="input_button4" value=" 提交數據 " />　
+                       {% endif %}
+                        <input type="button" class="input_button2" value=" 返回列表 " onclick="location.href='{{BASEURI}}admin/sys/func_list';" />
+                    </td>
+                </tr>
+            </table>
+            {% if (app_id < 1 && user_right.add) || user_right.edit %}
+        </form>
+       {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    var txtImg = $("#txtImg").imageList({ path: "/public/client/images/ico/", showPath: false, checkbox: false });
+    var json = eval(Helper.decodeHtml("[{{images|join:","}}]"));
+    txtImg.loadJson(json);
+
+    $("input[type='submit']").click(function(){
+        if ($("input[name='txtName']").val() == '') { alert("請輸入應用名稱！"); $("input[name='txtName']").focus(); return false; };
+        if ($("input[name='txtEName']").val() == '') { alert("請輸入應用代碼！"); $("input[name='txtEName']").focus(); return false; };
+        if ($("input[name='txtImg']").val() == '') { alert("請輸入應用圖片！"); $("input[name='txtImg']").focus(); return false; };
+        return true;
+    });
+    rbgame.starcloud.admin.pageLoad();
+</script>
+{% endblock %}

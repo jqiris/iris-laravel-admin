@@ -1,0 +1,114 @@
+{% extends "admin/master.html" %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title"><img src="{{CDNRESOURCE}}images/ico/back.gif" class="ico" /> 功能管理：  </span>
+        {%  if user_right.add %}<a href="{{BASEURI}}admin/sys/app_op"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加應用</a>{%  endif %}
+    </div>
+    <div class="content-list">
+        {% for _, app in funcs %}
+        <table class="gridview" id="gv{{app.AppEname}}">
+            <colgroup>
+                <col class="_w8" />
+                <col class="_w15"  />
+                <col />
+                <col />
+                <col />
+                <col class="_w8"  />
+                <col class="_w8"  />
+                <col class="_w18" />
+            </colgroup>
+            <tr>
+                <th class="pl5" colspan="8">
+                    <img src="{{CDNRESOURCE}}images/ico/{{app.AppImg}}" class="ico" /> {{app.AppName}}({{app.AppEname}} - {{smys((app.AppStatus == 1),"可用","不可用") }} - {{app.AppOrder}})
+                    {%  if user_right.edit %}
+                    <a href="{{BASEURI}}admin/sys/app_op?app_id={{app.AppId}}"><img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" /> 修改應用</a>
+                   {% else %}
+                    <a href="{{BASEURI}}admin/sys/app_op?app_id={{app.AppId}}"><img src="{{CDNRESOURCE}}images/ico/view.gif" class="ico" /> 查看應用</a>
+                    {%  endif %}
+                    {%  if user_right.delete %}
+                    <a href="{{BASEURI}}admin/sys/app_delete?app_id={{app.AppId}}" onclick="return confirm('刪除不可恢復，您確實要刪除數據嗎？')"><img src="{{CDNRESOURCE}}images/ico/delete.gif" class="ico" /> 刪除應用</a>
+                    {%  endif %}
+                </th>
+            </tr><tr style="height:20px">
+                <th class="center">編號</th>
+                <th class="center">功能代碼</th>
+                <th class="center">功能名稱</th>
+                <th class="center">功能网址</th>
+                <th class="center">圖標16x16</th>
+                <th class="center">排序</th>
+                <th class="center">狀態</th>
+                <th class="center">操作 {%  if user_right.add %}<a href="{{BASEURI}}admin/sys/func_op?app_id={{app.AppId}}"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加功能</a>{%  endif %}</th>
+            </tr>
+            {% for _, func in app.Children %}
+            <tr>
+                <td class="pl5">{{func.func_id.Intval}}</td>
+                <td class="pl5" nobr>{{func.func_ename.Strval}}</td>
+                <td class="pl5" nobr><img src="{{CDNRESOURCE}}images/ico/{{func.func_img.Strval}}" class="ico" /> {{func.func_name.Strval}}</td>
+                <td class="pl5" nobr>{{func.func_url.Strval}}</td>
+                <td class="pl5" nobr>{{func.func_img.Strval}}</td>
+                <td class="pl5" nobr>{{func.func_order.Intval}}</td>
+                <td class="pl5" nobr>{{smys((func.func_status.Intval == 1),"可用","不可用") }}</td>
+                <td class="center">
+                    {%  if user_right.edit %}
+                    <a href="{{BASEURI}}admin/sys/func_op?func_id={{func.func_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" /> 修改功能</a>
+                   {% else %}
+                    <a href="{{BASEURI}}admin/sys/func_op?func_id={{func.func_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/view.gif" class="ico" /> 查看功能</a>
+                    {%  endif %}
+                    {%  if user_right.delete %}
+                    <a href="{{BASEURI}}admin/sys/func_delete?func_id={{func.func_id.Intval}}" onclick="return confirm('刪除不可恢復，您確實要刪除數據嗎？')"><img src="{{CDNRESOURCE}}images/ico/delete.gif" class="ico" /> 刪除功能</a>
+                    {%  endif %}
+                </td>
+            </tr>{%  endfor %}
+        </table><br />
+        {%  endfor %}
+        {% for app in napps %}
+        <table class="gridview">
+            <colgroup>
+                <col class="_w8" />
+                <col class="_w15"  />
+                <col />
+                <col />
+                <col />
+                <col class="_w8"  />
+                <col class="_w8"  />
+                <col class="_w18" />
+            </colgroup>
+            <tr>
+                <th class="pl5" colspan="8">
+                    <img src="{{CDNRESOURCE}}images/ico/{{app.app_img.Strval}}" class="ico" /> {{app.app_name.Strval}}({{app.app_ename.Strval}} - {{smys((app.status.Intval == 1),"可用","不可用") }} - {{app.app_order.Intval}})
+                    {%  if user_right.edit %}
+                    <a href="{{BASEURI}}admin/sys/app_op?app_id={{app.app_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" /> 修改應用</a>
+                   {% else %}
+                    <a href="{{BASEURI}}admin/sys/app_op?app_id={{app.app_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/view.gif" class="ico" /> 查看應用</a>
+                    {%  endif %}
+                    {%  if user_right.delete %}
+                    <a href="{{BASEURI}}admin/sys/app_delete?app_id={{app.app_id.Intval}}" onclick="return confirm('刪除不可恢復，您確實要刪除數據嗎？')"><img src="{{CDNRESOURCE}}images/ico/delete.gif" class="ico" /> 刪除應用</a>
+                    {%  endif %}
+                </th>
+            </tr><tr style="height:20px">
+                <th class="center">編號</th>
+                <th class="center">功能代碼</th>
+                <th class="center">功能名稱</th>
+                <th class="center">功能网址</th>
+                <th class="center">圖標16x16</th>
+                <th class="center">排序</th>
+                <th class="center">狀態</th>
+                <th class="center">操作 {%  if user_right.add %}<a href="{{BASEURI}}admin/sys/func_op?app_id={{app.app_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加功能</a>{%  endif %}</th>
+            </tr><tr><td class="center" colspan="8">暂无功能  {%  if user_right.add %}<a href="{{BASEURI}}admin/sys/func_op?app_id={{app.app_id.Intval}}"><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加功能</a>{%  endif %}</td></tr>
+        </table><br />
+        {%  endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $('.gridview').each(function(){ $(this).fixTH(2); });
+</script>
+{% endblock %}

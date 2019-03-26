@@ -1,0 +1,7 @@
+{% extends "admin/master.html" %}
+
+{% block script %}
+<script type="text/javascript">
+    $(window).alert({title:'{{title}}', text:'{{message}}', cancelClick:function(){ top.tab.close(); }});
+</script>
+{% endblock %}

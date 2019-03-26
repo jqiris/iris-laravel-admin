@@ -1,0 +1,121 @@
+{% extends "admin/master.html" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{CDNRESOURCE}}js/ztree/ztreestyle/ztreestyle.css" />
+<style type="text/css"> html, body, .body { height:100%;padding:0; } </style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title">{% if (user_id > 0) %}<img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" />  修改{% else %}<img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加{% endif %}管理员</span>
+    </div>
+    <div class="content-list">
+        {% if((user_id <1 && user_right.add) || user_right.edit) %}
+        <form method="post" name="data" action="{{BASEURI}}admin/sys/admin_post?user_id={{ user_id }}">
+            {{ csrfField|truncatechars_html:25 }}
+            {% endif %}
+            <table class="table-form">
+                <colgroup>
+                    <col width="150px" />
+                    <col />
+                </colgroup>
+                <tr>
+                    <th class="t">管理员ID：</th>
+                    {% if (user_id < 1) %}
+                    <td class="pl5 t"><input type="text" class="input_text" name="txtUserID" value="{% if admin %} {{admin.user_id.Intval}} {% endif %}" /> <span class="red">* 必須輸入用戶ID或账号</span></td>
+                    {% else %}
+                    <td class="pl5 t">{% if admin %} {{admin.user_id.Intval}} {% endif %}</td>
+                    {% endif %}
+                </tr><tr>
+                    <th>管理员昵称：</th>
+                    <td class="pl5" id="user_email">{% if admin %} {{admin.nickname.Strval}} {% endif %}</td>
+                </tr><tr>
+                    <th>管理员Email：</th>
+                    <td class="pl5" id="user_nick">{% if admin %} {{admin.email.Strval}} {% endif %}</td>
+                </tr><tr>
+                    <th>管理遊戲：</th>
+                    <td class="pl5"><textarea class="checkboxlist" id="txtGame" name="txtGame">{% if admin %} {{admin.user_name.Strval}} {% endif %}</textarea></td>
+                </tr><tr>
+                    <th>角色：</th>
+                    <td class="pl5"><div class="input_cbo"><label>請選擇</label>
+                            <select id="cboRole" name="cboRole">
+                                <option value="">請選擇</option>
+                                {% for role in roles %}
+                                {% if (role.RoleEname != "MarketUser" && role.RoleEname != "Saler")  %}
+                                <option value="{{ role.RoleId }}" {% if (admin && admin.role_id.Intval==role.RoleId) %} selected=selected" {% endif %}>{{ role.RoleName }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div> <span class="require">* 必須選擇</span></td>
+                </tr><tr>
+                    <th>角色功能浏览：</th>
+                    <td class="pl5"><textarea class="checkboxtree" name="txtFunc" id="txtFunc" default="" nameValue=""></textarea></td>
+                </tr><tr>
+                    <td></td>
+                    <td class="pl5">
+                        {% if((user_id <1 && user_right.add) || user_right.edit) %}
+                        <input type="submit" class="input_button4" value=" 提交數據 " />　
+                        {% endif %}
+                        <input type="button" class="input_button2" value=" 返回列表 " onclick="location.href='{{BASEURI}}admin/sys/admin_list';" />
+                    </td>
+                </tr>
+            </table>
+            {% if((user_id <1 && user_right.add) || user_right.edit) %}
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="{{CDNRESOURCE}}js/ztree/jquery.ztree.core-3.1.js"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/ztree/jquery.ztree.excheck-3.1.js"></script>
+
+<script type="text/javascript">
+    txtFunc = $("#txtFunc").checkBoxTree({ allTitle: "所有角色功能", checkbox: null });
+    $("#cboRole").change(function(){
+        var val = $(this).val();
+        if (val == '') txtFunc.loadJson([]);
+        $.get("{{ BASEURI }}admin/sys/admin_checkFunc?role_id=" + val, function(data){
+            var json = eval(eval('(' + data + ')'));
+            txtFunc.loadJson(json);
+        },"json");
+    });
+
+    if ({{ user_id }}<1) {
+        $("input[name='txtUserID']").keyup(function(){
+            var key = $("input[name='txtUserID']").val();
+            $.get("{{ BASEURI }}admin/sys/admin_check?key=" + key, function(data){
+                $("#user_email").html("");
+                $("#user_nick").html("");
+                if (data.user_id == -2) {
+                    $("input[name='txtUserID']").next().html("* 已是管理员");
+                    return false;
+                }
+                if (data.user_id == -1) {
+                    $("input[name='txtUserID']").next().html("* 用戶不存在");
+                    return false;
+                }
+                if (data.user_id == 0) {
+                    $("input[name='txtUserID']").next().html("* 必須輸入用戶ID或Email");
+                    return false;
+                }
+                $("input[name='txtUserID']").val(data.user_id).next().html("");
+                $("#user_nick").html(data.user_email);
+                $("#user_email").html(data.user_nick);
+                return false;
+            },"json");
+        }).blur(function(){ $(this).keyup(); });
+    }
+    $("input[type='submit']").click(function(){
+        if ({{ user_id }} == 0) {
+            if ($("input[name='txtUserID']").val() == '') { alert("請輸入用戶ID或Email！"); $("input[name='txtUserID']").focus(); return false; };
+            if ($("#user_email").html()=='' || $("#user_nick").html()=='') { alert("請輸入正确的用戶ID或Email！"); $("input[name='txtUserID']").focus(); return false; };
+        }
+        if ($("select[name='cboRole']").val() == '') { alert("請選擇角色！"); $("select[name='cboRole']").focus(); return false; };
+        return true;
+    });
+    rbgame.starcloud.admin.pageLoad();
+</script>
+{% endblock %}

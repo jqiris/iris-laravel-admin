@@ -1,0 +1,88 @@
+{% extends "admin/master.html" %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title">{% if func_id > 0 %}<img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" />  修改{% else %}<img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加{% endif %}功能</span>
+    </div>
+    <div class="content-list">
+        {% if (func_id < 1 && user_right.add) || user_right.edit %}
+        <form method="post" name="data" action="{{BASEURI}}admin/sys/func_post?func_id={{func_id}}">
+            {{csrfField|truncatechars_html:25}}
+            {% endif %}
+            <table class="table-form">
+                <colgroup>
+                    <col width="150px" />
+                    <col />
+                </colgroup>
+                <tr>
+                    <th class="t">應用：</th>
+                    <td class="pl5 t"><div class="input_cbo"><label>請選擇</label>
+                            <select name="cboApp">
+                                <option value="">請選擇</option>
+                                {% for app in apps%}
+                                <option value="{{app.AppId}}" {{smys((func && func.AppId == app.AppId) || app_id == app.AppId,"selected=selected", "")}}>{{app.AppName}}</option>
+                                {% endfor %}
+                            </select>
+                        </div> <span class="require">* 必須選擇</span></td>
+                </tr><tr>
+                    <th>功能名稱：</th>
+                    <td class="pl5"><input type="text" class="input_text" name="txtName" value="{% if func %}{{func.FuncName}}{% endif %}" /> <span class="red">* 必須輸入</span></td>
+                </tr><tr>
+                    <th>功能代碼：</th>
+                    <td class="pl5"><input type="text" class="input_text" name="txtEName" value="{% if func %}{{func.FuncEname}}{% endif %}" /> <span class="red">* 必須輸入</span></td>
+                </tr><tr>
+                    <th>功能圖標16x16：</th>
+                    <td class="pl5"><textarea class="imagelist" id="txtImg" name="txtImg">{% if func %}{{func.FuncImg}}{% endif %}</textarea><span class="red">* 必須選擇</span></td>
+                </tr><tr>
+                    <th>网址：</th>
+                    <td class="pl5"><input type="text" class="input_text" name="txtUrl" value="{% if func %}{{func.FuncUrl}}{% endif %}" /> <span class="red">* 必須輸入</span></td>
+                </tr><tr>
+                    <th>排序：</th>
+                    <td class="pl5"><input type="text" class="input_text" name="txtOrder" value="{% if func %}{{func.FuncOrder}}{% endif %}" /></td>
+                </tr><tr>
+                    <th>狀態：</th>
+                    <td class="pl5"><div class="input_cbo"><label>請選擇</label>
+                            <select name="cboStatus">
+                                <option value="0" {% if func && func.Status==0 %} selected=selected {% endif %}>不可用</option>
+                                <option value="1" {% if func && func.Status==1 %} selected=selected {% endif %}>可用</option>
+                            </select>
+                        </div> <span class="require">* 狀態可用時才能正試使用</span></td>
+                </tr><tr>
+                    <td></td>
+                    <td class="pl5">
+                        {% if (func_id < 1 && user_right.add) || user_right.edit %}
+                        <input type="submit" class="input_button4" value=" 提交數據 " />　
+                        {% endif %}
+                        <input type="button" class="input_button2" value=" 返回列表 " onclick="location.href='{{BASEURI}}admin/sys/func_list';" />
+                    </td>
+                </tr>
+            </table>
+            {% if (func_id < 1 && user_right.add) || user_right.edit %}
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    var txtImg = $("#txtImg").imageList({ path: "/public/client/images/ico/", showPath: false, checkbox: false });
+    var json = eval(Helper.decodeHtml("[{{images|join:","}}]"));
+    txtImg.loadJson(json);
+
+    $("input[type='submit']").click(function(){
+        if ($("select[name='cboApp']").val() == '') { alert("請選擇應用！"); $("select[name='cboApp']").focus(); return false; };
+        if ($("input[name='txtName']").val() == '') { alert("請輸入功能名稱！"); $("input[name='txtName']").focus(); return false; };
+        if ($("input[name='txtEName']").val() == '') { alert("請輸入功能代碼！"); $("input[name='txtEName']").focus(); return false; };
+        if ($("input[name='txtImg']").val() == '') { alert("請輸入功能圖片！"); $("input[name='txtImg']").focus(); return false; };
+        if ($("input[name='txtUrl']").val() == '') { alert("請輸入功能网址！"); $("input[name='txtUrl']").focus(); return false; };
+        return true;
+    });
+    rbgame.starcloud.admin.pageLoad();
+</script>
+{% endblock %}

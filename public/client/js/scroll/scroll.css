@@ -1,0 +1,23 @@
+.framebox{position: fixed;top:50%;left: 50%;z-index: 9999;transform: translate(-50%,-60%);-webkit-transform: translate(-50%,-60%);-moz-transform: translate(-50%,-60%);width: 640px;height: 600px;background: #fff;}
+.framebox .container {	width: 95%;	height: auto;	background-color: #E6E6E6;	float: left;}
+.framebox .container .div_scroll {width: 95%;height: 500px;	position: absolute;top:50%;left: 50%;
+	transform: translate(-50%,-55%);-webkit-transform: translate(-50%,-55%);-moz-transform: translate(-50%,-55%);
+	overflow: auto;float: left;	border: 1px solid #ccc;}
+.framebox .container .scroll_container {	overflow: hidden;	position: relative;	background-color: #F8F8F8;}
+.framebox .container .scroll_absolute {position: absolute;}
+.framebox .container .scroll_vertical_bar {position: absolute;top: 0;right: 0;width: 16px;height: 100%;margin: 0;padding: 0;}
+.framebox .container .scroll_track {position: relative;background-color: #fff;}
+.framebox .container .scroll_drag {position: relative;	top: 0;	cursor: pointer;	width: 100%;	background-color: #404552;}
+.framebox .scroll_arrow {text-indent: -20000px;display: block;cursor: pointer;}
+.framebox .scroll_arrow_up{background: url("glyphicons-halflings.png");background-position: -288px -120px;}
+.framebox .scroll_arrow_down{background: url("glyphicons-halflings.png");background-position: -313px -119px;}
+.framebox .container .scroll_vertical_bar .scroll_arrow {height: 16px;}
+.framebox .container .div_scroll h1{padding-top: 15px;color:#000;font-size:18px;text-align: center;width: 100%;font-family: '微软雅黑';height: 24px;line-height: 24px;}
+.framebox .container .div_scroll p{text-indent: 2em;width: 95%;margin: 0 auto;color:#333;font-size: 12px;line-height: 18px;font-family: '微软雅黑';}
+.framebox .container .div_scroll h2{font-family: '微软雅黑';font-size: 14px;color: #333;width:  95%;margin: 0 auto;}
+.framebox .container .div_scroll .paddingtop10{padding-top:10px;}
+.framebox .bottom{position: absolute;bottom: 15px;left: 50%;transform: translate(-50%,0);-webkit-transform: translate(-50%,0);-moz-transform: translate(-50%,0);text-align: center;}
+.framebox .bottom .label{line-height: 24px;}
+.framebox .bottom .button{padding-top: 5px;}
+.opacity{width:100%;height:100%;opacity:0.6; filter: alpha(opacity=50); background-color:#000;position: absolute;top: 0;left:0;z-index: 9998;}
+

@@ -1,0 +1,71 @@
+{% extends "admin/master.html" %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-operate">
+        <span class="title">{% if uid > 0 %}<img src="{{CDNRESOURCE}}images/ico/edit.gif" class="ico" />  修改{% if user %} {{user.Nickname}}{% endif %} {% else %} ?><img src="{{CDNRESOURCE}}images/ico/add.gif" class="ico" /> 添加{% endif %}用戶</span>
+    </div>
+    <div class="content-list">
+        {% if (func_id < 1 && user_right.add) || user_right.edit %}
+        <form method="post" name="data" action="{{BASEURI}}admin/sys/user_post?uid={{uid}}">
+            {{csrfField|truncatechars_html:25}}
+            {% endif %}
+            <table class="table-form">
+                <colgroup>
+                    <col width="150px" />
+                    <col />
+                    <col width="150px" />
+                    <col />
+                </colgroup>
+               {% if uid < 1 %}<tr>
+                    <th class="t">用户名：</th>
+                    <td class="pl5 t" colspan="3"><input type="text" class="input_text" name="username" value="" /></td>
+                </tr>{% else  %}<tr>
+                    <th class="t">用户名：</th>
+                    <td class="pl5 t" colspan="3">{% if user %} {{user.Username}}{% endif %}</td>
+                </tr>{% endif  %}<tr>
+                    <th>邮箱：</th>
+                    <td class="pl5" colspan="3"><input type="text" class="input_text" name="email" value="{% if user %} {{user.Email}}{% endif %}" /></td>
+                </tr><tr>
+                    <th>密码：</th>
+                    <td class="pl5" colspan="3"><input type="text" class="input_text" name="password" value="" />{% if uid>0  %} <span class="red">* 为空时不修改密码</span>{% endif  %}</td>
+                </tr><tr>
+                    <th>昵称：</th>
+                    <td class="pl5" colspan="3"><input type="text" class="input_text" name="nickname" value="{% if user %} {{user.Nickname}}{% endif %}" /> </td>
+                </tr><tr>
+                    <th>性别：</th>
+                    <td class="pl5" colspan="3"><input type="text" class="input_text" name="gender" value="{% if user %} {{user.Gender}}{% endif %}" /> </td>
+                </tr><tr>
+                    <th>用户类型：</th>
+                    <td class="pl5" colspan="3"><input type="text" class="input_text" name="utype" value="{% if user %} {{user.Utype}}{% endif %}" /> </td>
+                </tr><tr>
+                    <th>手机：</th>
+                    <td class="pl5" colspan="3"><input type="text" class="input_text" name="tel" value="{% if user %} {{user.Tel}}{% endif %}" /> </td>
+                </tr><tr>
+                    <th>生日：</th>
+                    <td class="pl5" colspan="3"><input type="text" class="input_text" name="birthday" value="{% if user %} {{user.Birthday}}{% endif %}" /> </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="pl5">
+                        {% if (func_id < 1 && user_right.add) || user_right.edit %}
+                        <input type="submit" class="input_button4" value=" 提交數據 " />　
+                        {% endif %}
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+
+            {% if (func_id < 1 && user_right.add) || user_right.edit %}
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    rbgame.starcloud.admin.pageLoad();
+</script>
+{% endblock %}

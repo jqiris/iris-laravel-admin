@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>{{title}}</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    {% if isMobile %}<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />{% endif %}
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="{{CDNRESOURCE}}css/admin/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{CDNRESOURCE}}css/admin/black.css?v={{CDNVERSION}}" />
+    <script type="text/javascript"> var root = "{{BASEURI}}admin/", iframeID = "", helpID = 0; if (self == top) { var url = unescape(window.location.href).split("/"); top.location = "{{BASEURI}}admin/?title="+escape("{{title}}")+"&url=" + encodeURIComponent(window.location.href.replace('http://' + url[2], '')); }; </script>
+    <style type="text/css"> html, body, .body { width:auto; height:auto; overflow:initial; } .body { padding-bottom:30px; } .syswindow .msg_mid .msg_cm { _padding-left:6px; } </style>
+    {% block style %} {% endblock %}
+</head>
+<body {% if isMobile %} class="mobile" {% endif %}>
+<div class="body">{% block content %} {% endblock %}</div>
+<noscript><iframe src="*.html"></iframe><style type="text/css" media="screen">body, html { height:100%; width:100%; overflow:hidden; }.graph, .map { height:0 !important; }select {visibility:hidden;}</style><div id="noscript"></div><div id="noscriptContentBox" class="done"><div id="noscriptContent"><h3>系統運行需要javascript的支持。<br /><br />請設置瀏覽器的“啟用javascript”選項。</h3></div></div></noscript>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/jquery-min.js"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/jquery.extend.js?v={{CDNVERSION}}"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/jquery.admin.extend.js?v={{CDNVERSION}}"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/rbgame.starcloud.admin.js?v={{CDNVERSION}}"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/rbgame.helper.js?v={{CDNVERSION}}"></script>
+<script type="text/javascript"> rbgame.starcloud.admin.iframeinit(); </script>
+{% block script %} {% endblock %}
+</body>
+</html>

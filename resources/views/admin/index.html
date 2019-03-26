@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>{{GAME_TITLE}} － {{title}}</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    {% if isMobile %}<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />{% endif %}
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="{{CDNRESOURCE}}css/admin/fonts/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{CDNRESOURCE}}css/admin/black.css?v={{CDNVERSION}}" />
+    {% if rid == 1012 || rid == 1011 %}
+
+        <link rel="stylesheet" type="text/css" href="{{CDNRESOURCE}}js/scroll/scroll.css?v={{CDNVERSION}}" />
+    {% endif %}
+    <style type="text/css"> html, body, .body, .wrapper { width:100%;height:100%; overflow:hidden; background-color:#2e333e; } </style>
+    <script> var root = "{{BASEURI}}admin/"; if (self != top) { top.location = root; }; </script>
+</head>
+<body>
+<div class="wrapper">
+    <div class="nav-tab-right-menu">
+        <a href="#" class="refresh"><img src="{{CDNRESOURCE}}images/ico/refresh.gif" />　刷新</a>
+        <i></i>
+        <a href="#" class="close_current"><img src="{{CDNRESOURCE}}images/ico/stop.gif" />　關閉當前選項卡</a>
+        <a href="#" class="close_all"><img src="{{CDNRESOURCE}}images/t.gif" />　關閉所有選項卡</a>
+        <i></i>
+        <a href="#" class="cancel"><img src="{{CDNRESOURCE}}images/t.gif" />　取消操作</a>
+    </div>
+    <div class="mheader miniheader clearfix">
+        <div class="header-nav">
+            <a class="tab_open" id="editPassword" href="{{BASEURI}}admin/sys/editpassword"><img src="{{CDNRESOURCE}}images/ico/admin.gif" width="16px" height="16px" /> {{uname}}&nbsp;(ID：{{uid}})</a>　
+            {% if rid == 1012 || rid == 1011 %}
+                <a class="tab_open" id="announcementView" href="{{BASEURI}}admin/p2p/announcementView"><img src="{{CDNRESOURCE}}images/ico/view.gif" width="16px" height="16px" /> 公告</a>　
+            {% endif %}
+            <a href="{{BASEURI}}admin/logout"><img src="{{CDNRESOURCE}}images/ico/exit.png" /> 退出系統</a>
+        </div>
+        <h1 class="sys-title">{{GAME_TITLE}} － {{title}}</h1>
+    </div>
+    <div class="content clearfix">
+        <div class="content-left">
+            <div class="content-left-nav bt0 clearfix"><i></i>功能列表</div>
+            <div class="nav-tree" mobile="{{isMobile}}">
+                {% if showHome %}
+                    <a href="{{BASEURI}}admin/main" id="home"><img src="{{CDNRESOURCE}}images/ico/home.gif" /> 管理首頁</a>
+                {% endif %}
+                {% for _, menus in admin_menus %}
+                    <div class="node close">
+                        <img src="{{CDNRESOURCE}}images/ico/{{menus.AppImg}}" /> {{menus.AppName}}</div>
+                    <div class="item">
+                        {% for _, children in menus.Children %}
+                            <a hidefocus="true" href="{{BASEURI}}{{children.url.Strval}}" id="{{children.code.Strval}}"><img src="{{CDNRESOURCE}}images/ico/{{children.img.Strval}}" /> {{children.title.Strval}}</a>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="content-left content-left-block hide"><i></i><span>功<br />能<br />列<br />表</span></div>
+        <div class="content-right ml170">
+            <div class="nav-tab-close"><i></i></div>
+            <ul class="nav-tab" nowrap></ul>
+            <div class="nav-tab-page"></div>
+        </div>
+    </div>
+    <div class="footer"></div>
+</div>
+<noscript><iframe src="*.html"></iframe><style type="text/css" media="screen">body, html { height:100%; width:100%; overflow:hidden; }.graph, .map { height:0 !important; }select {visibility:hidden;}</style><div id="noscript"></div><div id="noscriptContentBox" class="done"><div id="noscriptContent"><h3>系統運行需要javascript的支持。<br /><br />請設置瀏覽器的“啟用javascript”選項。</h3></div></div></noscript>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/jquery-min.js"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/jquery.extend.js?v={{CDNVERSION}}"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/jquery.admin.extend-min.js?v={{CDNVERSION}}"></script>
+<script type="text/javascript" src="{{CDNRESOURCE}}js/rbgame.starcloud.admin.js?v={{CDNVERSION}}"></script>
+<script type="text/javascript">	$(document).ready(function () {
+    rbgame.starcloud.admin.init();
+        {%if  isMobile%}
+        $(".content-left-nav > i").click();
+        {% endif %}
+}); </script>
+{% if rid == 1012 || rid == 1011 %}
+    <div class="framebox" id="framebox" {% if isMobile %} style="width:360px;height:500px;"{% endif %}>
+        <div class="container">
+            <div class="div_scroll" {% if isMobile %} style="height:400px;" {% endif %}>
+                <div style=" float:left; height:auto; width:auto">
+                    <h1>极光游戏推广员协议条款</h1>
+                    <p class="paddingtop10">欢迎您注册并使用极光游戏推广员系统（下称"本系统"）。本系统请您在注册前仔细阅读本协议的所有内容，特别是有关推广员的义务的条款以及免除、限制本公司责任的条款。如您对本协议任何内容有异议，请不要注册或使用本系统；当您点击确定键注册或者使用本系统或者相关服务，即视为您已仔细阅读本协议所有内容，同意接受本协议的所有规定，成为受本协议约束的本公司推广员（以下也称"推广员"）。</p>
+                    <h2 class="paddingtop10">一、推广员工作内容</h2>
+                    <p>1.负责通过线下场所或线上渠道（ 微信、微博等）、自身人际关系、非官方网络资源等方式推广本游戏《极光游戏》</p>
+                    <p>2.宣传极光游戏正面信息，带领新人进入游戏，使新玩家尽快融入到游戏中来。</p>
+                    <h2 class="paddingtop10">二、游戏推广员的权利和义务</h2>
+                    <p>1.推广员在宣传过程中不能虚假、诱骗、违反本公司或系统以及国家法规所规定的内容。线上渠道中，应通过图片、文字等介绍新用户认识并了解游戏的特色和优点，吸引新用户进入游戏。</p>
+                    <p>2.推广员须保证在进行极光游戏推广之前已经获得线上或者线下场所的许可，并遵守相应的线上线下规章制度，否则由此产生的纠纷和可能导致的一切责任由推广员自己承担；推广员同意本公司对此免责。</p>
+                    <p>3.帮助新人入门游戏，让玩家尽快的融入游戏，同时不断带动新人；耐心解答玩家的各种问题，包括如何购买房卡，如何登陆极光游戏网站下载客户端等。</p>
+                    <p>4.服从本公司管理人员的安排，推广员理解，推广员在注册和使用本系统过程中所提供的个人资料及相关信息是本公司判断其身份的重要依据。根据要求尽可能提供详尽的信息，并确保信息的完整性、合法性和真实性。如推广员的个人资料有任何变动，必须在本系统中及时更新,必要时电话或邮件形式告之本公司管理人员，以保证其资料准确性。如果推广员不能提供准确完整的个人信息、未及时更新相关信息或者提供相关的资料，将导致本公司无法判断推广员的身份，从而影响到推广收益发放等操作，本公司对因此给推广员造成的损失不承担任何责任。如因推广员提交的信息资料不真实、不准确、不完整、不合法从而导致本公司作出错误判断的，本公司有权立即取消该推广员的资格并追究其法律责任。</p>
+                    <p>5.如本公司发现推广员故意制造虚假信息或出现其他不当行为（包含但不仅限于利用本游戏进行赌博等违法犯罪行为），本公司除有权取消该推广员的资格、停止发放推广收益以外，还有权向推广员追讨其通过虚假行为或者不当行为获得的利益，及向公安举报。</p>
+                    <p>6.推广员可以根据工作环境和个人实际情况灵活采用各种推广方式。但所有推广方式必须符合法律法规。</p>
+                    <p>7.推广员有义务妥善保管自己的帐号，如因被盗、转借导致推广员账号非法使用或违规操作，所造成的损失及相关法律责任均由推广员本人承担。</p>
+                    <p>8.推广员拥有自主的权利，单方面随时决定终止与本公司的合作并停止使用本系统相关服务。如本公司对本协议内容或相关服务等作出任何变更，而推广员不同意有关变更内容的，推广员应立即终止与本公司的合作并停止使用本系统相关服务。</p>
+                    <h2 class="paddingtop10">三、本公司权利和义务</h2>
+                    <p>1.本公司应按照本协议的约定向推广员发放推广收益。</p>
+                    <p>2.本公司有权审核推广员提交的注册信息和资料，有权了解推广员的推广情况，获得与推广员信息和推广业绩相关的必要的资料、数据和有关证据。</p>
+                    <p>3.本公司有权根据实际需要修改本协议，并通过但不限于公告、系统消息或邮件等形式公布。</p>
+                    <p>4.本公司有权单方随时变更、中断或终止本系统及相关服务的权利，且不需对用户或任何第三方负责。除本协议另有约定外，本公司将以电话、短信、系统消息/页面或者电子邮件方式通知推广员。终止合作通知自发出之时即视为送达。如因推广员资料中登记的联络方式不正确、不完整或者不真实而导致联络失败的，本公司不能也不会对此引起的任何损失或损害承担责任。</p>
+                    <p>5.本公司有权根据公司业务发展需要，终止本协议涉及的合作。在此情况下，本公司应通过发布公告等形式通知推广员。</p>
+                    <p>6.尊重个人隐私是本公司的重要政策。在未经授权的情况下，本公司不会公开或向第三方透露推广员在申请时提交的个人资料。但如根据法律规定或政府部门的命令或在以下四种情况下，本公司可不经授权而向相关部门或第三方公开或透露推广员的个人信息：</p>
+                    <p>(1)在紧急情况下竭力维护推广员个人、第三人或社会大众的财产或人身安全；</p>
+                    <p>(2)保持维护本公司的知识产权或其它合法权益；</p>
+                    <p>(3)根据本公司游戏服务的相关规则、制度、条款。</p>
+                    <h2 class="paddingtop10">四、推广收益</h2>
+                    <p>推广员按照本公司相关规定申领推广收益。推广收益以游戏虚拟货币形式发放。具体兑换规则以公司的通知为准。本公司将在后台确认推广业绩并在业绩确认后5个工作日内将推广收益发放至推广员账户。</p>
+                    <h2 class="paddingtop10">五、声明</h2>
+                    <p>本公司与推广员在此声明：双方不会因根据本协议产生的推广合作，构成任何形式的劳动关系。推广员不隶属于本公司，不受本公司内部规章制度的约束。本公司除向推广员支付本协议约定的推广收益外，不承担推广员的任何其他费用，包括但不限于因推广员因推广活动所产生的成本、社会保险、福利和医疗保险费用等。</p>
+                    <p>本公司与推广员共同在此声明，本协议不包含任何可能理解为双方之间设立一种推广关系的内容。推广员无权代表本公司对外缔结合同。推广员不得以本公司的名义开展任何与约定推广活动无关的活动或者从事违法犯罪活动，否则一切后果由推广员自行承担，同时本公司保留追究其法律责任的权利。</p>
+                    <h2 class="paddingtop10">六、不可抗力</h2>
+                    <p>1.一方因不可抗力不能履行本协议的，根据不可抗力的影响，可以部分或者全部免除违约责任。但一方迟延履行后发生不可抗力的，不能免除责任。</p>
+                    <p>2.一方因不可抗力不能履行本协议的，应当及时通知对方，以减轻可能给对方造成的损失，并在合理期限内提供证明。未及时通知的，对因迟延通知而造成的扩大损失依然承担赔偿责任。</p>
+                    <p>3.一方因不可抗力不能履行合同，但尚未造成对本协议根本违约的，另一方应该在履约时间上给予对方适当的宽限；如果因不可抗力导致不能实现本协议目的的，双方均有权解除本协议。</p>
+                    <h2 class="paddingtop10">七、协议的生效和终止</h2>
+                    <p>1.协议的生效：</p>
+                    <p>本协议自您登录推广系统并点击"我已同意《极光推广员协议条款》"时生效。</p>
+                    <p>2.下列情形之一出现时，本协议终止：</p>
+                    <p>(1)本协议约定的合作期限届满；</p>
+                    <p>(2)本协议约定的终止条件发生；</p>
+                    <p>(3)在本协议有效期内，推广员被依法追究刑事责任的，本公司有权单方面终止本协议；</p>
+                    <p>(4)其他按照法律规定以及本协议约定的终止情况。</p>
+                    <h2 class="paddingtop10">八、其他约定</h2>
+                    <p>本协议未尽事宜，可由双方另行签订补充协议予以明确。补充协议的内容与本协议的内容有冲突的，优先适用补充协议的规定。</p>
+                    <p>推广员与本公司在合作中产生的争议，应当友好协商解决；协商不成的，任何一方均有权向被告所在地法院提起诉讼。</p>
+                </div>
+            </div>
+        </div>
+        <div class="bottom" style="width:250px;">
+            <label style="color: #000;"><input type="checkbox" id="checked" checked/>&nbsp;我已同意《极光推广员协议条款》</label>
+            <div class="button"><input type="button" class="input_button4" value="确定" style="width：60px;" id="confirm"/></div>
+        </div>
+    </div>
+    <div class="opacity"></div>
+    <script type="text/javascript" src="{{CDNRESOURCE}}js/scroll/easyscroll.js"></script>
+    <script type="text/javascript" src="{{CDNRESOURCE}}js/scroll/mousewheel.js"></script>
+    <script>
+        $(function(){
+            $('.div_scroll').scroll_absolute({arrows:true});
+            $('#confirm').click(function(){
+                if($('#checked').is(':checked')){
+                    $('.opacity,.framebox').fadeOut(200);
+                }
+            })
+        });
+
+    </script>
+{% endif %}
+</body>
+</html>

@@ -3,9 +3,9 @@ a cms base on laravel and iris
 
 怎么使用:
 
-1- go get github.com/jmesyan/iris-laravel-admin
+1- go get github.com/jqiris/iris-laravel-admin
 
-2- cd GOPATH/src/github.com/jmesyan/iris-laravel-admin
+2- cd GOPATH/src/github.com/jqiris/iris-laravel-admin
 
 3- cd /app/Models/,将iris-laravel.sql导入mysql数据库
 

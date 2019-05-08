@@ -131,15 +131,15 @@ func init() {
 
 func main() {
 	go func() {
-		for range time.Tick(2 * time.Second) {
-			SecNum += 2
+		for range time.Tick(3 * time.Second) {
+			SecNum += 3
 			showAll(users)
 		}
 	}()
 	begin := time.Now()
 
 	go func(){
-		tick := time.NewTicker(1 * time.Second)
+		tick := time.NewTicker(2 * time.Second)
 		for {
 			select {
 			case <-tick.C:

@@ -17,12 +17,10 @@ var (
 	RQNum int    // 最大并发数，由命令行传入
 	Urls   []string // url，由命令行传入
 	userNum    int      // 用户数
-	sum  int //总次数
-	finish int //完成次数
+	Durtime  int //持续分钟
 	writetimes int //写入次数
 	updatetimes int //更新次数
 	readtimes int //查询次数
-	done chan struct{}
 	donemu sync.Mutex
 	api string
 	logfile *os.File
@@ -66,7 +64,6 @@ func (u *User) request() {
 					u.mu.Unlock() // 解锁
 				}
 				donemu.Lock()
-				finish+=1
 				if uindex == 0{
 					writetimes+=1000
 				} else if (uindex == 1){
@@ -118,22 +115,17 @@ func showAll(us []User) {
 		writetimes,
 		updatetimes,
 		readtimes)
-	if (finish >= sum){
-		done <- struct{}{}
-	}
 }
 
 func init() {
-	if len(os.Args) != 3 {
-		log.Fatal("用户数 请求次数 url")
+	if len(os.Args) != 4 {
+		log.Fatal("用户数 每秒请求次数 持续时间")
 	}
 	userNum, _ = strconv.Atoi(os.Args[1])
 	RQNum, _ = strconv.Atoi(os.Args[2])
-	sum =  userNum*RQNum
-	finish = 0
+	Durtime, _ = strconv.Atoi(os.Args[3])
 	Urls = []string{"addyly", "modyly", "readyly"}
 	users = make([]User, userNum)
-	done = make(chan struct{})
 	api  = "http://192.168.6.168:8088/"
 	root,_:=os.Getwd()
 	fileName := root+"/pressure.log"
@@ -167,9 +159,9 @@ func main() {
 			}
 		}
 	}()
-	<-done
+	<-time.After(time.Duration(Durtime)*time.Minute)
 	end := time.Now()
-	logger.Printf("开始时间:%s, 结束时间:%s, 总耗时：%s:\n", begin, end, end.Sub(begin))
+	logger.Printf("开始时间:%s, 结束时间:%s :\n", begin, end)
 	showAll(users)
 }
 
@@ -185,7 +177,7 @@ func requite() {
 		users[i].UserId = i
 		users[i].QPSNum = RQNum / userNum + temp
 		go users[i].request()
-		time.Sleep(45 * time.Millisecond)
+		time.Sleep(2 * time.Millisecond)
 	}
 	<- c    // 阻塞
 }

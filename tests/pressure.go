@@ -82,7 +82,7 @@ func (u *User) request() {
 }
 
 func (u *User) show() {
-	log.Printf("用户id：%d,并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
+	logger.Printf("用户id：%d,并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
 		u.UserId,
 		u.SBCNum,
 		u.SuccessNum + u.FailNum,
@@ -105,6 +105,9 @@ func showAll(us []User) {
 		FailNum += us[i].FailNum
 		RTNum += us[i].RTNum
 		us[i].show()
+	}
+	if SecNum < 1{
+		SecNum  = 1
 	}
 	logger.Printf("并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d,写入次数:%d,更新次数:%d, 查询次数:%d\n",
 		SBCNum,
@@ -167,6 +170,7 @@ func main() {
 	<-done
 	end := time.Now()
 	logger.Printf("开始时间:%s, 结束时间:%s, 总耗时：%s:\n", begin, end, end.Sub(begin))
+	showAll(users)
 }
 
 func requite() {

@@ -117,7 +117,7 @@ func init() {
 	Urls = []string{"addyly", "modyly", "readyly"}
 	users = make([]User, userNum)
 	done = make(chan struct{})
-	api  = "http://localhost:8081/"
+	api  = "http://192.168.6.168:8088/"
 	root,_:=os.Getwd()
 	fileName := root+"/pressure.log"
 	fmt.Print(fileName)

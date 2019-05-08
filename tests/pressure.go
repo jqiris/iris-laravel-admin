@@ -44,36 +44,35 @@ func (u *User) request() {
 	var tb time.Time
 	var el time.Duration
 	for i := 0;i < u.QPSNum;i++ {
+		u.mu.Lock()
 		u.SBCNum++
+		u.mu.Unlock()
 		go func(u *User) {
-			for {
-				tb = time.Now()
-				uindex := rand.Intn(3)
-				url := api+Urls[uindex]
-				logger.Printf("%s,请求用户ID:%d, 请求URL:%s\n", time.Now(),u.UserId, url)
-				_, err := http.Get(url)
-				if err == nil {
-					el = time.Since(tb)
-					u.mu.Lock() // 上锁
-					u.SuccessNum++
-					u.RTNum += el
-					u.mu.Unlock() // 解锁
-				} else {
-					u.mu.Lock() // 上锁
-					u.FailNum++
-					u.mu.Unlock() // 解锁
-				}
-				donemu.Lock()
-				if uindex == 0{
-					writetimes+=1000
-				} else if (uindex == 1){
-					updatetimes+=100
-				} else if (uindex == 2){
-					readtimes += 2000
-				}
-				donemu.Unlock()
-				time.Sleep(1 * time.Second)
+			tb = time.Now()
+			uindex := rand.Intn(3)
+			url := api+Urls[uindex]
+			logger.Printf("%s,请求用户ID:%d, 请求URL:%s\n", time.Now(),u.UserId, url)
+			_, err := http.Get(url)
+			if err == nil {
+				el = time.Since(tb)
+				u.mu.Lock() // 上锁
+				u.SuccessNum++
+				u.RTNum += el
+				u.mu.Unlock() // 解锁
+			} else {
+				u.mu.Lock() // 上锁
+				u.FailNum++
+				u.mu.Unlock() // 解锁
 			}
+			donemu.Lock()
+			if uindex == 0{
+				writetimes+=1000
+			} else if (uindex == 1){
+				updatetimes+=100
+			} else if (uindex == 2){
+				readtimes += 2000
+			}
+			donemu.Unlock()
 		}(u)
 	}
 }

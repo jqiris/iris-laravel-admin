@@ -22,6 +22,8 @@ var (
 	done chan struct{}
 	donemu sync.Mutex
 	api string
+	logfile *os.File
+	logger *log.Logger
 )
 
 var users []User
@@ -46,7 +48,7 @@ func (u *User) request() {
 			for {
 				tb = time.Now()
 				url := api+Urls[rand.Intn(3)]
-				fmt.Printf("%s,请求用户ID:%d, 请求URL:%s\n", time.Now(),u.UserId, url)
+				logger.Printf("%s,请求用户ID:%d, 请求URL:%s\n", time.Now(),u.UserId, url)
 				_, err := http.Get(url)
 				if err == nil {
 					el = time.Since(tb)
@@ -69,7 +71,7 @@ func (u *User) request() {
 }
 
 func (u *User) show() {
-	fmt.Printf("用户id：%d,并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
+	log.Printf("用户id：%d,并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
 		u.UserId,
 		u.SBCNum,
 		u.SuccessNum + u.FailNum,
@@ -93,7 +95,7 @@ func showAll(us []User) {
 		RTNum += us[i].RTNum
 		us[i].show()
 	}
-	fmt.Printf("并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
+	logger.Printf("并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
 		SBCNum,
 		SuccessNum+FailNum,
 		RTNum/(time.Duration(SecNum)*time.Second),
@@ -116,6 +118,15 @@ func init() {
 	users = make([]User, userNum)
 	done = make(chan struct{})
 	api  = "http://localhost:8081/"
+	root,_:=os.Getwd()
+	fileName := root+"/pressure.log"
+	fmt.Print(fileName)
+	var err error
+	logfile, err = os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_APPEND|os.O_TRUNC, 0644)
+	if err != nil{
+		log.Fatal(err.Error())
+	}
+	logger = log.New(logfile,"[iris]", log.LstdFlags)
 }
 
 func main() {
@@ -138,7 +149,7 @@ func main() {
 	}()
 	<-done
 	end := time.Now()
-	fmt.Printf("开始时间:%s, 结束时间:%s, 总耗时：%s:\n", begin, end, end.Sub(begin))
+	logger.Printf("开始时间:%s, 结束时间:%s, 总耗时：%s:\n", begin, end, end.Sub(begin))
 }
 
 func requite() {

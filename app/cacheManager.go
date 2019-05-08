@@ -20,7 +20,7 @@ var (
 
 func init() {
 	RegisterSession()
-	CacheManager = newCacheManager()
+	//CacheManager = newCacheManager()
 	Week = 604800 * time.Second
 	Day = 86400 * time.Second
 	Hour = 3600 * time.Second

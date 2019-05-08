@@ -2,6 +2,7 @@ package Http
 
 import (
 	"github.com/jqiris/iris-laravel-admin/app/Http/Controllers/Admin"
+	"github.com/jqiris/iris-laravel-admin/app/Http/Controllers/Game"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Middleware/auth"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Middleware/csrf"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Middleware/captcha"
@@ -78,6 +79,10 @@ func frontRouter(api *iris.Application){
 	api.Get("/", func(ctx iris.Context) {
 		ctx.View("game/index.html")
 	})
+
+	api.Get("/addyly", Game.AddYly)
+	api.Get("/modyly", Game.ModifyYly)
+	api.Get("/readyly", Game.ReadYly)
 }
 func notFound(ctx iris.Context) {
 	// 当http.status=400 时向客户端渲染模板$views_dir/errors/404.html

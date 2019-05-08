@@ -166,15 +166,9 @@ func main() {
 
 func requite() {
 	c := make(chan int)
-	temp := 0
 	for i := 0;i < userNum;i++ {
-		if RQNum % userNum != 0 && i < RQNum % userNum {
-			temp = 1
-		} else {
-			temp = 0
-		}
 		users[i].UserId = i
-		users[i].QPSNum = RQNum / userNum + temp
+		users[i].QPSNum = RQNum
 		go users[i].request()
 		time.Sleep(2 * time.Millisecond)
 	}

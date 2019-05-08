@@ -19,6 +19,9 @@ var (
 	userNum    int      // 用户数
 	sum  int //总次数
 	finish int //完成次数
+	writetimes int //写入次数
+	updatetimes int //更新次数
+	readtimes int //查询次数
 	done chan struct{}
 	donemu sync.Mutex
 	api string
@@ -47,7 +50,8 @@ func (u *User) request() {
 		go func(u *User) {
 			for {
 				tb = time.Now()
-				url := api+Urls[rand.Intn(3)]
+				uindex := rand.Intn(3)
+				url := api+Urls[uindex]
 				logger.Printf("%s,请求用户ID:%d, 请求URL:%s\n", time.Now(),u.UserId, url)
 				_, err := http.Get(url)
 				if err == nil {
@@ -63,6 +67,13 @@ func (u *User) request() {
 				}
 				donemu.Lock()
 				finish+=1
+				if uindex == 0{
+					writetimes+=1000
+				} else if (uindex == 1){
+					updatetimes+=100
+				} else if (uindex == 2){
+					readtimes += 2000
+				}
 				donemu.Unlock()
 				time.Sleep(1 * time.Second)
 			}
@@ -95,12 +106,15 @@ func showAll(us []User) {
 		RTNum += us[i].RTNum
 		us[i].show()
 	}
-	logger.Printf("并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
+	logger.Printf("并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d,写入次数:%d,更新次数:%d, 查询次数:%d\n",
 		SBCNum,
 		SuccessNum+FailNum,
 		RTNum/(time.Duration(SecNum)*time.Second),
 		SuccessNum,
-		FailNum)
+		FailNum,
+		writetimes,
+		updatetimes,
+		readtimes)
 	if (finish >= sum){
 		done <- struct{}{}
 	}
@@ -127,19 +141,22 @@ func init() {
 		log.Fatal(err.Error())
 	}
 	logger = log.New(logfile,"[iris]", log.LstdFlags)
+	writetimes = 0
+	readtimes = 0
+	updatetimes = 0
 }
 
 func main() {
 	go func() {
-		for range time.Tick(3 * time.Second) {
-			SecNum += 3
+		for range time.Tick(5 * time.Second) {
+			SecNum += 5
 			showAll(users)
 		}
 	}()
 	begin := time.Now()
 
 	go func(){
-		tick := time.NewTicker(2 * time.Second)
+		tick := time.NewTicker(3 * time.Second)
 		for {
 			select {
 			case <-tick.C:

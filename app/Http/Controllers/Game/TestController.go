@@ -13,12 +13,14 @@ var (
 )
 
 func AddYly(ctx iris.Context){
+	var tests []*structure.YlyPress
 	for i:=0; i< 1000;i++{
 		test := &structure.YlyPress{
 			Username:createRandomName(),
 		}
-		Models.AddYly(test)
+		tests = append(tests, test)
 	}
+	Models.AddYly(tests)
 	ctx.JSONP(1)
 }
 

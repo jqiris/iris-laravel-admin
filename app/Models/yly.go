@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func AddYly( press *structure.YlyPress){
+func AddYly( press []*structure.YlyPress){
 	_, err:=dbr.Insert(press)
 	if err != nil{
 		log.Fatal(err.Error())

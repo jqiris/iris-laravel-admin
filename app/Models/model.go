@@ -39,7 +39,6 @@ func init() {
 			db: dbx,
 		}
 		dbr = DB.db
-		dbr.ShowSQL(true)
 	}
 }
 

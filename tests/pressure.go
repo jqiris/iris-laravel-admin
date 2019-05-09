@@ -141,6 +141,7 @@ func init() {
 }
 
 func main() {
+	http.Get(api+"clearyly")
 	go func() {
 		for range time.Tick(2 * time.Second) {
 			SecNum += 2
@@ -165,12 +166,10 @@ func main() {
 }
 
 func requite() {
-	c := make(chan int)
 	for i := 0;i < userNum;i++ {
 		users[i].UserId = i
 		users[i].QPSNum = RQNum
 		go users[i].request()
 		time.Sleep(2 * time.Millisecond)
 	}
-	<- c    // 阻塞
 }

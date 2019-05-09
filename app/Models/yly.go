@@ -24,6 +24,11 @@ func ReadYly(limit int) []map[string]ModelValue{
 	return MapArrToMV(res)
 }
 
+func ClearYly(){
+	sql := fmt.Sprintf("delete from yly_press where uid>=%d", 1100000)
+	DB.Delete(sql)
+}
+
 func GetPressCount() int64 {
 	count, err := dbr.Count(&structure.YlyPress{})
 	if err != nil {

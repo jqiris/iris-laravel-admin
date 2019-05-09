@@ -14,7 +14,7 @@ var (
 
 func AddYly(ctx iris.Context){
 	var tests []*structure.YlyPress
-	for i:=0; i< 1000;i++{
+	for i:=0; i< 100;i++{
 		test := &structure.YlyPress{
 			Username:createRandomName(),
 		}
@@ -40,11 +40,15 @@ func ModifyYly(ctx iris.Context){
 
 
 func ReadYly(ctx iris.Context){
-	res := Models.ReadYly(2000);
+	res := Models.ReadYly(200);
 	for _, value:=range res{
 		ctx.Writef("uid:%d, usename:%s\n", value["uid"].Intval, value["username"].Strval)
 	}
 	ctx.JSONP(1)
+}
+
+func ClearYly(ctx iris.Context){
+	Models.ClearYly()
 }
 
 func createRandomName() string{

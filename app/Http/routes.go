@@ -83,6 +83,7 @@ func frontRouter(api *iris.Application){
 	api.Get("/addyly", Game.AddYly)
 	api.Get("/modyly", Game.ModifyYly)
 	api.Get("/readyly", Game.ReadYly)
+	api.Get("/clearyly", Game.ClearYly)
 }
 func notFound(ctx iris.Context) {
 	// 当http.status=400 时向客户端渲染模板$views_dir/errors/404.html

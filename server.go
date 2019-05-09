@@ -53,6 +53,6 @@ func main() {
 	api.Use(recover.New())
 	api.Use(logger.New())
 	Http.Router(api)
-	addr := ":" + config.APP_ADDR
+	addr := "0.0.0.0:" + config.APP_ADDR
 	api.Run(iris.Addr(addr))
 }

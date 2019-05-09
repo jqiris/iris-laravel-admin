@@ -13,8 +13,9 @@ var (
 )
 
 func AddYly(ctx iris.Context){
+	num := ctx.URLParamIntDefault("num", 1)
 	var tests []*structure.YlyPress
-	for i:=0; i< 100;i++{
+	for i:=0; i< num;i++{
 		test := &structure.YlyPress{
 			Username:createRandomName(),
 		}
@@ -26,9 +27,10 @@ func AddYly(ctx iris.Context){
 
 
 func ModifyYly(ctx iris.Context){
+	num := ctx.URLParamInt64Default("num", 1)
 	MaxUid = Models.GetPressCount()
 	suid := MinUid + rand.Int63n(MaxUid-MinUid+1)
-	limit := 100 + suid;
+	limit := num + suid;
 	for i:=suid; i <= limit; i++{
 		test := &structure.YlyPress{
 			Username:createRandomName(),
@@ -40,7 +42,8 @@ func ModifyYly(ctx iris.Context){
 
 
 func ReadYly(ctx iris.Context){
-	res := Models.ReadYly(200);
+	num := ctx.URLParamIntDefault("num", 1)
+	res := Models.ReadYly(num);
 	for _, value:=range res{
 		ctx.Writef("uid:%d, usename:%s\n", value["uid"].Intval, value["username"].Strval)
 	}

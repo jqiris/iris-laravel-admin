@@ -13,20 +13,26 @@ func AddYly( press []*structure.YlyPress){
 }
 
 
-func ModifyYly(uid int64, press *structure.YlyPress){
+func ModifyYly(uid int, press *structure.YlyPress){
 	dbr.Where("uid=?", uid).AllCols().Update(press)
 }
 
 
-func ReadYly(limit int) []map[string]ModelValue{
+func ReadYly(limit int){
 	sql := fmt.Sprintf("select * from yly_press order by rand() limit %d", limit)
-	res := DB.Select(sql)
-	return MapArrToMV(res)
+	DB.Select(sql)
 }
 
 func ClearYly(){
 	sql := fmt.Sprintf("delete from yly_press where uid>=%d", 1100000)
 	DB.Delete(sql)
+}
+
+func GetMaxUid() int{
+ sql := "select max(uid) uid from yly_press";
+ res := DB.SelectOne(sql)
+ value := MapFaceToMV(res)
+ return value["uid"].Intval
 }
 
 func GetPressCount() int64 {

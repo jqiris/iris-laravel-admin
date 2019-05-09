@@ -7,10 +7,6 @@ import (
 	"math/rand"
 )
 
-var (
-	MinUid  int64= 1001
-	MaxUid int64 = 1100000
-)
 
 func AddYly(ctx iris.Context){
 	num := ctx.URLParamIntDefault("num", 1)
@@ -27,26 +23,19 @@ func AddYly(ctx iris.Context){
 
 
 func ModifyYly(ctx iris.Context){
-	num := ctx.URLParamInt64Default("num", 1)
-	MaxUid = Models.GetPressCount()
-	suid := MinUid + rand.Int63n(MaxUid-MinUid+1)
-	limit := num + suid;
-	for i:=suid; i <= limit; i++{
-		test := &structure.YlyPress{
-			Username:createRandomName(),
-		}
-		Models.ModifyYly(i, test)
+	minuid := 1001; maxuid := Models.GetMaxUid()
+	suid := minuid + rand.Intn(maxuid-minuid)
+	test := &structure.YlyPress{
+		Username:createRandomName(),
 	}
+	Models.ModifyYly(suid, test)
 	ctx.JSONP(1)
 }
 
 
 func ReadYly(ctx iris.Context){
 	num := ctx.URLParamIntDefault("num", 1)
-	res := Models.ReadYly(num);
-	for _, value:=range res{
-		ctx.Writef("uid:%d, usename:%s\n", value["uid"].Intval, value["username"].Strval)
-	}
+	Models.ReadYly(num);
 	ctx.JSONP(1)
 }
 

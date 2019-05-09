@@ -22,7 +22,7 @@ var (
 	updatetimes int //更新次数
 	readtimes int //查询次数
 	donemu sync.Mutex
-	api string
+	api string =  "http://192.168.6.168:8088/"
 	logfile *os.File
 )
 
@@ -135,7 +135,6 @@ func init() {
 	Urls = []string{"addyly", "modyly", "readyly"}
 	users = make([]User, userNum)
 	userchan = make([]chan struct{}, userNum)
-	api  = "http://127.0.0.1:8089/"
 	root,_:=os.Getwd()
 	fileName := root+"/pressure.log"
 	var err error

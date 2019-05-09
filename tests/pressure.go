@@ -72,11 +72,11 @@ func (u *User) request(userchan chan struct{}, times int) {
 			}
 			donemu.Lock()
 			if uindex == 0{
-				writetimes+=1000
+				writetimes+=100
 			} else if (uindex == 1){
 				updatetimes+=100
 			} else if (uindex == 2){
-				readtimes += 2000
+				readtimes += 200
 			}
 			donemu.Unlock()
 			wg.Done()

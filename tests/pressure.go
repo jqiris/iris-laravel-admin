@@ -51,7 +51,6 @@ func (u *User) request() {
 			tb = time.Now()
 			uindex := rand.Intn(3)
 			url := api+Urls[uindex]
-			logger.Printf("%s,请求用户ID:%d, 请求URL:%s\n", time.Now(),u.UserId, url)
 			_, err := http.Get(url)
 			if err == nil {
 				el = time.Since(tb)
@@ -74,6 +73,7 @@ func (u *User) request() {
 			}
 			donemu.Unlock()
 		}(u)
+		time.Sleep(1*time.Second)
 	}
 }
 
@@ -170,6 +170,6 @@ func requite() {
 		users[i].UserId = i
 		users[i].QPSNum = RQNum
 		go users[i].request()
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(45 * time.Millisecond)
 	}
 }

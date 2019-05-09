@@ -1,6 +1,7 @@
 package Http
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Controllers/Admin"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Controllers/Game"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Middleware/auth"
@@ -12,7 +13,7 @@ import (
 	"time"
 )
 
-func Router(api *iris.Application) {
+func Router(api *gin.Engine) {
 	api.OnErrorCode(iris.StatusNotFound, notFound)
 	api.OnErrorCode(iris.StatusInternalServerError, internalServerError)
 	api.OnErrorCode(iris.StatusServiceUnavailable, serviceUnavailable)

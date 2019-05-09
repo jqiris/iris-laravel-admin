@@ -24,10 +24,12 @@ var (
 	donemu sync.Mutex
 	api string
 	logfile *os.File
-	logger *log.Logger
 )
 
-var users []User
+var (
+	users []User
+	userchan []chan struct{}
+)
 
 type User struct {
 	UserId      int          // 用户id
@@ -40,9 +42,14 @@ type User struct {
 	mu         sync.Mutex
 }
 
-func (u *User) request() {
+func (u *User) request(userchan chan struct{}, times int) {
+	if times > 1{
+		<-userchan
+	}
 	var tb time.Time
 	var el time.Duration
+	wg := sync.WaitGroup{}
+	wg.Add(u.QPSNum)
 	for i := 0;i < u.QPSNum;i++ {
 		u.mu.Lock()
 		u.SBCNum++
@@ -72,13 +79,15 @@ func (u *User) request() {
 				readtimes += 2000
 			}
 			donemu.Unlock()
+			wg.Done()
 		}(u)
-		time.Sleep(1*time.Second)
 	}
+	wg.Wait()
+	userchan <- struct{}{}
 }
 
 func (u *User) show() {
-	logger.Printf("用户id：%d,并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
+	fmt.Printf("用户id：%d,并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d\n",
 		u.UserId,
 		u.SBCNum,
 		u.SuccessNum + u.FailNum,
@@ -105,7 +114,7 @@ func showAll(us []User) {
 	if SecNum < 1{
 		SecNum  = 1
 	}
-	logger.Printf("并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d,写入次数:%d,更新次数:%d, 查询次数:%d\n",
+	fmt.Printf("并发数：%d,请求次数：%d,平均响应时间：%s,成功次数：%d,失败次数：%d,写入次数:%d,更新次数:%d, 查询次数:%d\n",
 		SBCNum,
 		SuccessNum+FailNum,
 		RTNum/(time.Duration(SecNum)*time.Second),
@@ -125,16 +134,15 @@ func init() {
 	Durtime, _ = strconv.Atoi(os.Args[3])
 	Urls = []string{"addyly", "modyly", "readyly"}
 	users = make([]User, userNum)
-	api  = "http://192.168.6.168:8088/"
+	userchan = make([]chan struct{}, userNum)
+	api  = "http://127.0.0.1:8089/"
 	root,_:=os.Getwd()
 	fileName := root+"/pressure.log"
-	fmt.Print(fileName)
 	var err error
 	logfile, err = os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_APPEND|os.O_TRUNC, 0644)
 	if err != nil{
 		log.Fatal(err.Error())
 	}
-	logger = log.New(logfile,"[iris]", log.LstdFlags)
 	writetimes = 0
 	readtimes = 0
 	updatetimes = 0
@@ -151,25 +159,30 @@ func main() {
 	begin := time.Now()
 
 	go func(){
+		times := 1
 		tick := time.NewTicker(1 * time.Second)
 		for {
 			select {
 			case <-tick.C:
-				requite()
+				requite(times)
+				times+=1
 			}
 		}
 	}()
 	<-time.After(time.Duration(Durtime)*time.Minute)
 	end := time.Now()
-	logger.Printf("开始时间:%s, 结束时间:%s :\n", begin, end)
+	fmt.Printf("开始时间:%s, 结束时间:%s :\n", begin, end)
 	showAll(users)
 }
 
-func requite() {
+func requite(times int) {
 	for i := 0;i < userNum;i++ {
 		users[i].UserId = i
 		users[i].QPSNum = RQNum
-		go users[i].request()
+		if (times == 1) {
+			userchan[i] = make(chan struct{}, 1)
+		}
+		go users[i].request(userchan[i], times)
 		time.Sleep(45 * time.Millisecond)
 	}
 }

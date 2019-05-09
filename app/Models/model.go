@@ -40,6 +40,18 @@ func init() {
 		}
 		dbr = DB.db
 	}
+	dbr.SetMaxIdleConns(20)
+	dbr.SetMaxOpenConns(15)
+	// 定时ping数据库, 保持连接池连接
+	go func() {
+		ticker := time.NewTicker(time.Minute * 5)
+		for {
+			select {
+			case <-ticker.C:
+				dbr.Ping()
+			}
+		}
+	}()
 }
 
 func GetDb() *xorm.Engine{

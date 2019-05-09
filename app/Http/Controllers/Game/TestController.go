@@ -54,8 +54,9 @@ func ClearYly(ctx iris.Context){
 func createRandomName() string{
 	names := []string{"宋", "茅", "庞", "熊", "纪", "舒", "屈", "项", "祝", "董", "梁", "杜", "阮", "蓝", "闵", "季", "贾"}
 	str := ""
+	len := len(names)
 	for i := 0; i < 3; i++{
-		j := rand.Intn(len(names))
+		j := rand.Intn(len)
 		str += names[j]
 	}
 	return str

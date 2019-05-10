@@ -2,6 +2,7 @@ package Admin
 
 import (
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"github.com/jqiris/iris-laravel-admin/app"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Middleware/auth"
 	"github.com/jqiris/iris-laravel-admin/app/Http/Middleware/captcha"
@@ -17,7 +18,7 @@ import (
 	"time"
 )
 
-func Msg(ctx iris.Context, message string) {
+func Msg(ctx *gin.Context, message string) {
 	ctx.ViewData("message", message)
 	ctx.ViewData("title", "系统提示")
 	ctx.View("errors/error.html")
@@ -42,12 +43,12 @@ type MenuDetail struct {
 	Children  map[int]map[string]Models.ModelValue
 }
 
-func Main(ctx iris.Context){
+func Main(ctx *gin.Context){
 	ctx.ViewData("title", "管理主页")
 	ctx.View("admin/main.html")
 }
 
-func Index(ctx iris.Context) {
+func Index(ctx *gin.Context) {
 	role_id := auth.RoleAdmin(ctx)
 	if role_id < 1 {
 		ctx.Redirect("admin/login")
@@ -102,7 +103,7 @@ func Index(ctx iris.Context) {
 	ctx.View("admin/index.html")
 }
 
-func LoginView(ctx iris.Context) {
+func LoginView(ctx *gin.Context) {
 	if auth.IsAdmin(ctx) {
 		ctx.Redirect("/admin/index")
 	}
@@ -112,7 +113,7 @@ func LoginView(ctx iris.Context) {
 	ctx.View("admin/login.html")
 }
 
-func LoginPost(ctx iris.Context) {
+func LoginPost(ctx *gin.Context) {
 	username := ctx.FormValue("username")
 	password := ctx.FormValue("password")
 	capc := ctx.FormValue("captcha")
@@ -166,7 +167,7 @@ func LoginPost(ctx iris.Context) {
 }
 
 //用户登陆验证
-func GetPassport(ctx iris.Context, username, password string) int {
+func GetPassport(ctx *gin.Context, username, password string) int {
 	if !app.CheckUsername(username) {
 		return -4
 	}
@@ -201,7 +202,7 @@ func checkLogin(username, password string) int {
 	return user.Uid
 }
 
-func CheckLoginPost(ctx iris.Context, username, password string) string {
+func CheckLoginPost(ctx *gin.Context, username, password string) string {
 	ret := GetPassport(ctx, username, password)
 	if ret < 1000 {
 		if ret == -1 {
@@ -245,7 +246,7 @@ func updateLoginData(user *structure.YlyMember, utype int) {
 	}
 }
 
-func LogOut(ctx iris.Context) {
+func LogOut(ctx *gin.Context) {
 	uid := app.GetGlobalUid(ctx)
 	if uid > 0 {
 		//app.Sess.Start(ctx).Clear()
@@ -254,7 +255,7 @@ func LogOut(ctx iris.Context) {
 	ctx.Redirect("/admin/login")
 }
 
-func RoleList(ctx iris.Context) {
+func RoleList(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "RoleManage") {
 		Msg(ctx, "无操作權限!")
 		return
@@ -273,7 +274,7 @@ type AppDetail struct {
 	AppFunc []map[string]Models.ModelValue
 }
 
-func RoleOp(ctx iris.Context) {
+func RoleOp(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "RoleManage") {
 		Msg(ctx, "无操作權限!")
 		return
@@ -312,7 +313,7 @@ func RoleOp(ctx iris.Context) {
 	ctx.View("admin/sys/role_op.html")
 }
 
-func RolePost(ctx iris.Context) {
+func RolePost(ctx *gin.Context) {
 	role_id := ctx.URLParamIntDefault("role_id", 0)
 	txtName := ctx.FormValue("txtName")
 	txtEName := ctx.FormValue("txtEName")
@@ -369,7 +370,7 @@ func RolePost(ctx iris.Context) {
 	ctx.Redirect("/admin/sys/role_list")
 }
 
-func RoleDelete(ctx iris.Context) {
+func RoleDelete(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "RoleManage", "delete") {
 		Msg(ctx, "无操作权限！")
 		return
@@ -385,7 +386,7 @@ func RoleDelete(ctx iris.Context) {
 	ctx.Redirect("/admin/sys/role_list")
 }
 
-func AdminList(ctx iris.Context) {
+func AdminList(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "AdminManage") {
 		Msg(ctx, "无操作权限！")
 		return
@@ -397,7 +398,7 @@ func AdminList(ctx iris.Context) {
 	ctx.View("admin/sys/admin_list.html")
 }
 
-func AdminOp(ctx iris.Context) {
+func AdminOp(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "AdminManage") {
 		Msg(ctx, "无操作权限！")
 		return
@@ -425,7 +426,7 @@ func hasRoleText(ops []string, key int, text string) string {
 	}
 	return res + text
 }
-func AdminCheckFunc(ctx iris.Context) {
+func AdminCheckFunc(ctx *gin.Context) {
 	role_id := ctx.URLParamIntDefault("role_id", 0)
 	if !auth.IsAdmin(ctx) || role_id < 1 {
 		ctx.JSONP("[]")
@@ -498,7 +499,7 @@ func AdminCheckFunc(ctx iris.Context) {
 	ctx.JSONP("[" + jsonstr + "]")
 }
 
-func AdminPost(ctx iris.Context) {
+func AdminPost(ctx *gin.Context) {
 	user_id := ctx.URLParamIntDefault("user_id", 0)
 	txtGame := ctx.FormValue("txtGame")
 	role_id := app.StringToInt(ctx.FormValue("cboRole"))
@@ -555,7 +556,7 @@ func AdminPost(ctx iris.Context) {
 	ctx.Redirect("/admin/sys/admin_list")
 }
 
-func AdminCheck(ctx iris.Context) {
+func AdminCheck(ctx *gin.Context) {
 	data := iris.Map{
 		"user_id":    0,
 		"user_email": "",
@@ -584,7 +585,7 @@ func AdminCheck(ctx iris.Context) {
 	ctx.JSONP(data)
 }
 
-func FuncList(ctx iris.Context) {
+func FuncList(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "FunctionManage") {
 		Msg(ctx, "无操作权限")
 		return
@@ -622,7 +623,7 @@ func FuncList(ctx iris.Context) {
 	ctx.ViewData("user_right", auth.FuncOp(ctx, "FunctionManage"))
 	ctx.View("admin/sys/func_list.html")
 }
-func FuncOp(ctx iris.Context) {
+func FuncOp(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "FunctionManage") {
 		Msg(ctx, "无操作权限")
 		return
@@ -655,7 +656,7 @@ func get_icon_files(dir string) []string {
 	return data
 }
 
-func FuncPost(ctx iris.Context) {
+func FuncPost(ctx *gin.Context) {
 	func_id := ctx.URLParamIntDefault("func_id", 0)
 	txtName := ctx.FormValue("txtName")
 	txtEName := ctx.FormValue("txtEName")
@@ -693,7 +694,7 @@ func FuncPost(ctx iris.Context) {
 	ctx.Redirect("/admin/sys/func_list")
 }
 
-func FuncDelete(ctx iris.Context) {
+func FuncDelete(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "FunctionManage", "delete") {
 		Msg(ctx, "无操作权限")
 		return
@@ -710,7 +711,7 @@ func FuncDelete(ctx iris.Context) {
 
 }
 
-func UserList(ctx iris.Context) {
+func UserList(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "UserManage") {
 		Msg(ctx, "无操作权限")
 		return
@@ -743,7 +744,7 @@ func UserList(ctx iris.Context) {
 	ctx.ViewData("user_right", auth.FuncOp(ctx, "UserManage"))
 	ctx.View("admin/sys/user_list.html")
 }
-func UserOp(ctx iris.Context) {
+func UserOp(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "UserManage") {
 		Msg(ctx, "无操作权限")
 		return
@@ -767,7 +768,7 @@ func UserOp(ctx iris.Context) {
 	ctx.View("admin/sys/user_op.html")
 }
 
-func UserPost(ctx iris.Context) {
+func UserPost(ctx *gin.Context) {
 	user_id := ctx.URLParamIntDefault("uid", 0)
 	meid := app.GetGlobalUid(ctx)
 	username := ctx.FormValue("username")
@@ -828,7 +829,7 @@ func UserPost(ctx iris.Context) {
 	ctx.View("admin/sys/user_op.html")
 }
 
-func UserDelete(ctx iris.Context) {
+func UserDelete(ctx *gin.Context) {
 	if !auth.CheckFunction(ctx, "UserManage", "delete") {
 		Msg(ctx, "无操作权限")
 		return
@@ -845,14 +846,14 @@ func UserDelete(ctx iris.Context) {
 	ctx.Redirect("/admin/sys/user_list")
 }
 
-func EditPassword(ctx iris.Context) {
+func EditPassword(ctx *gin.Context) {
 	uid := app.GetGlobalUid(ctx)
 	ctx.ViewData("title", "修改密码")
 	ctx.ViewData("uid", uid)
 	ctx.View("admin/sys/editpassword.html")
 }
 
-func EditpasswordPost(ctx iris.Context) {
+func EditpasswordPost(ctx *gin.Context) {
 	uid := app.GetGlobalUid(ctx)
 	if !auth.IsAdmin(ctx) || uid < 1 {
 		Msg(ctx, "参数错误")
@@ -893,7 +894,7 @@ func EditpasswordPost(ctx iris.Context) {
 	ctx.JSONP(data)
 }
 
-func AppOp(ctx iris.Context){
+func AppOp(ctx *gin.Context){
 	if !auth.CheckFunction(ctx, "FunctionManage"){
 		Msg(ctx,"无操作权限")
 		return
@@ -914,7 +915,7 @@ func AppOp(ctx iris.Context){
 	ctx.View("admin/sys/app_op.html")
 }
 
-func AppPost(ctx iris.Context){
+func AppPost(ctx *gin.Context){
 	app_id := ctx.URLParamIntDefault("app_id", 0)
 	data := &structure.SysApp{
 		AppName:ctx.FormValue("txtName"),
@@ -939,7 +940,7 @@ func AppPost(ctx iris.Context){
 	ctx.Redirect("/admin/sys/func_list")
 }
 
-func AppDelete(ctx iris.Context){
+func AppDelete(ctx *gin.Context){
 	if !auth.CheckFunction(ctx, "FunctionManage","delete"){
 		Msg(ctx,"无操作权限")
 		return

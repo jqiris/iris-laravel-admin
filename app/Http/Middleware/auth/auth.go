@@ -2,12 +2,12 @@ package auth
 
 import (
 	"github.com/jqiris/iris-laravel-admin/app"
-	"github.com/kataras/iris"
+	"github.com/gin-gonic/gin"
 	"strings"
 )
 
 //是否管理员
-func IsAdmin(ctx iris.Context) bool{
+func IsAdmin(ctx *gin.Context) bool{
 	uid := app.GetGlobalUid(ctx)
 	if uid > 0{
 		admin:=app.CacheManager.GetAdmin(uid)
@@ -20,7 +20,7 @@ func IsAdmin(ctx iris.Context) bool{
 }
 
 
-func RoleAdmin(ctx iris.Context) int{
+func RoleAdmin(ctx *gin.Context) int{
 	uid := app.GetGlobalUid(ctx)
 	if uid > 0{
 		admin:=app.CacheManager.GetAdmin(uid)
@@ -33,7 +33,7 @@ func RoleAdmin(ctx iris.Context) int{
 }
 
 //是否有功能
-func FuncOp(ctx iris.Context, funstr string) map[string]bool{
+func FuncOp(ctx *gin.Context, funstr string) map[string]bool{
 	uid := app.GetGlobalUid(ctx)
 	if uid < 1 {
 		return nil
@@ -49,7 +49,7 @@ func FuncOp(ctx iris.Context, funstr string) map[string]bool{
 }
 
 //是否有功能的操作
-func CheckFunction(ctx iris.Context, funstr string, op ...string)bool{
+func CheckFunction(ctx *gin.Context, funstr string, op ...string)bool{
 	funop:=FuncOp(ctx, funstr)
 	if funop == nil{
 		return false
@@ -65,9 +65,11 @@ func CheckFunction(ctx iris.Context, funstr string, op ...string)bool{
 }
 
 
-func CheckAdmin(ctx iris.Context){
+func CheckAdmin(ctx *gin.Context){
 	isadmin := IsAdmin(ctx)
-	path :=ctx.Path()
+	path :=ctx.ContentType()
+	ctx.ContentType()
+	ctx.Params
 	if strings.ToLower(ctx.Method()) == "get"{
 		if path == "/admin/login" || path == "/admin/logout" || isadmin{
 			ctx.Next()
